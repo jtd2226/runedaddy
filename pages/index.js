@@ -34,6 +34,7 @@ function VTable({ list, refresh }) {
         <Table
           width={width}
           height={height}
+          className="table"
           headerHeight={20}
           rowHeight={50}
           rowCount={sorted.length}
@@ -46,11 +47,13 @@ function VTable({ list, refresh }) {
             label="Name"
             dataKey="name"
             width={350}
+            minWidth={50}
             cellDataGetter={({ rowData }) => rowData}
             cellRenderer={({ cellData }) => {
               const url = cellData.icon.split(' ').join('_');
               return (
                 <a
+                  title={cellData.name}
                   href={`https://oldschool.runescape.wiki/w/${
                     url.split('.')[0]
                   }`}
@@ -69,12 +72,14 @@ function VTable({ list, refresh }) {
           />
           <Column
             width={150}
+            minWidth={90}
             label="margin"
             dataKey="margin"
             cellDataGetter={({ rowData }) => rowData.margin?.toLocaleString()}
           />
           <Column
             width={150}
+            minWidth={90}
             label="low"
             dataKey="low"
             cellDataGetter={({ rowData }) => rowData}
@@ -91,6 +96,7 @@ function VTable({ list, refresh }) {
           />
           <Column
             width={150}
+            minWidth={90}
             label="high"
             dataKey="high"
             cellDataGetter={({ rowData }) => rowData}
@@ -107,12 +113,14 @@ function VTable({ list, refresh }) {
           />
           <Column
             width={150}
+            minWidth={50}
             label="limit"
             dataKey="limit"
             cellDataGetter={({ rowData }) => rowData.limit?.toLocaleString()}
           />
           <Column
             width={150}
+            minWidth={50}
             label="profit"
             dataKey="profit"
             cellDataGetter={({ rowData }) => rowData.profit?.toLocaleString()}
