@@ -1,15 +1,20 @@
 .container {
-  padding: 0 2rem;
+  padding: 2rem;
+  background: #1d1c1c;
+  color: #6bb1a5;
 }
 
 .main {
-  min-height: 100vh;
-  padding: 4rem 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: 100vh;
+}
+
+.tr {
+  display: grid;
+  grid-auto-columns: minmax(max-content, 1fr);
+  align-items: stretch;
+  width: 100%;
+  max-height: 100%;
+  gap: 0px;
 }
 
 .footer {

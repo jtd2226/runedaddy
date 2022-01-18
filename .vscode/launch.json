@@ -1,0 +1,42 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "yarn: dev:debug",
+        "request": "launch",
+        "runtimeArgs": [
+          "dev:debug"
+        ],
+        "runtimeExecutable": "yarn",
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "type": "node"
+      },
+      {
+        "name": "yarn: dev",
+        "request": "launch",
+        "runtimeArgs": [
+          "dev:debug"
+        ],
+        "runtimeExecutable": "yarn",
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "type": "node"
+      },
+      {
+        "type": "node",
+        "request": "attach",
+        "name": "attach chrome",
+        "skipFiles": ["<node_internals>/**"],
+        "port": 9229,        
+      },
+    ],
+    "compounds": [
+      {
+        "name": "debug",
+        "configurations": ["yarn: dev:debug", "attach chrome"],
+      }
+    ]
+  }
