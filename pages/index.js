@@ -133,7 +133,7 @@ function VTable({ list, refresh }) {
 }
 
 export default function Home() {
-  const [max, setMax] = React.useState(2000000);
+  const [max, setMax] = React.useState(5000000);
   const { data, refresh } = ge.query({ max }).useCache({ wait: 700 });
   return (
     <div className={styles.container}>
