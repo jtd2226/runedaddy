@@ -1,5 +1,5 @@
 .container {
-  padding: 2rem;
+  padding: 1rem;
   background: #1d1c1c;
   color: #6bb1a5;
 }
@@ -88,6 +88,25 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   max-width: 300px;
+}
+
+.search {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid gray;
+  margin: 16px 8px;
+  font-size: x-large;
+  background: transparent;
+  outline: transparent;
+  color: white;
+  transition: 0.3s;
+}
+
+.search:focus,
+.search:active {
+  transform: scale(1.1);
+  border-color: #0070f3;
 }
 
 .card:hover,

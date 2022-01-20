@@ -5,6 +5,8 @@ import { Column, Table, AutoSizer, SortDirection } from 'react-virtualized';
 import React from 'react';
 import _ from 'lodash';
 import 'react-virtualized/styles.css';
+import useFilters from 'hooks/useFiltered';
+import { useRouter } from 'next/router';
 
 const ge = Request.path('api/hello');
 
@@ -133,8 +135,11 @@ function VTable({ list, refresh }) {
 }
 
 export default function Home() {
-  const [max, setMax] = React.useState(2000000);
+  const {
+    query: { max = 4000000 },
+  } = useRouter();
   const { data, refresh } = ge.query({ max }).useCache({ wait: 700 });
+  const { search, filtered } = useFilters(data);
   return (
     <div className={styles.container}>
       <Head>
@@ -144,17 +149,12 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        {/* <input
-          value={max}
-          type="number"
-          step="1000"
-          onChange={e => {
-            const value = e.currentTarget.value;
-            if (!value) return;
-            setMax(parseFloat(parseFloat(value).toFixed(0)));
-          }}
-        /> */}
-        <VTable list={data ?? []} refresh={refresh} />
+        <input
+          onChange={e => search('name', e.currentTarget.value)}
+          className={styles.search}
+          placeholder="Search"
+        />
+        <VTable list={filtered} refresh={refresh} />
       </main>
     </div>
   );
