@@ -54,21 +54,35 @@ function VTable({ list, refresh }) {
             cellRenderer={({ cellData }) => {
               const url = cellData.icon.split(' ').join('_');
               return (
-                <a
-                  title={cellData.name}
-                  href={`https://oldschool.runescape.wiki/w/${
-                    url.split('.')[0]
-                  }`}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    alignItems: 'center',
+                  }}
                 >
-                  <img
-                    height="30px"
-                    src={`https://oldschool.runescape.wiki/images/${url}`}
-                  />
-                  {cellData.name}
-                </a>
+                  <a
+                    title="View item"
+                    href={`https://oldschool.runescape.wiki/w/${
+                      url.split('.')[0]
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <img
+                      height="30px"
+                      src={`https://oldschool.runescape.wiki/images/${url}`}
+                    />
+                  </a>
+                  <a
+                    title="View realtime prices"
+                    href={`https://prices.runescape.wiki/osrs/item/${cellData.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {cellData.name}
+                  </a>
+                </div>
               );
             }}
           />
