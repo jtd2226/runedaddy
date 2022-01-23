@@ -173,7 +173,7 @@ const volume_filters = {
 
 export default function Home() {
   const {
-    query: { max = 4000000 },
+    query: { max = '4m' },
     push,
   } = useRouter();
   const { data, refresh } = ge.query({ max }).useCache({ wait: 700 });
