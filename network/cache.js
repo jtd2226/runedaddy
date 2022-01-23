@@ -292,7 +292,13 @@ const CacheRequest = props => {
         url,
         fetcher: fetcher ?? (() => Promise.resolve()),
         mutator: body => {
-          if (body) options.body = JSON.stringify(body);
+          if (body) {
+            config.body = JSON.stringify(body);
+            config.method = 'POST';
+            config.headers = update(config.headers, {
+              'Content-Type': 'application/json',
+            });
+          }
           return send();
         },
       });

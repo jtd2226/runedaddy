@@ -7,6 +7,7 @@ import _ from 'lodash';
 import 'react-virtualized/styles.css';
 import useFilters from 'hooks/useFiltered';
 import { useRouter } from 'next/router';
+import useLocalStorage from 'hooks/useLocalStorage';
 
 const ge = Request.path('api/hello');
 
@@ -30,6 +31,7 @@ function VTable({ list, refresh }) {
     },
     [list, refresh]
   );
+
   return (
     <AutoSizer>
       {({ height, width }) => (
@@ -87,6 +89,13 @@ function VTable({ list, refresh }) {
             }}
           />
           <Column
+            width={70}
+            minWidth={50}
+            label="volume"
+            dataKey="volume"
+            cellDataGetter={({ rowData }) => rowData.volume?.toLocaleString()}
+          />
+          <Column
             width={150}
             minWidth={90}
             label="margin"
@@ -96,7 +105,7 @@ function VTable({ list, refresh }) {
           <Column
             width={150}
             minWidth={90}
-            label="low"
+            label="buy"
             dataKey="low"
             cellDataGetter={({ rowData }) => rowData}
             cellRenderer={({ cellData }) => {
@@ -113,7 +122,7 @@ function VTable({ list, refresh }) {
           <Column
             width={150}
             minWidth={90}
-            label="high"
+            label="sell"
             dataKey="high"
             cellDataGetter={({ rowData }) => rowData}
             cellRenderer={({ cellData }) => {
@@ -148,12 +157,34 @@ function VTable({ list, refresh }) {
   );
 }
 
+const volume_filters = {
+  Low: {
+    volume(v) {
+      return v >= 1;
+    },
+  },
+  Mid: {
+    volume(v) {
+      return v >= 45;
+    },
+  },
+  All: {},
+};
+
 export default function Home() {
   const {
     query: { max = 4000000 },
+    push,
   } = useRouter();
   const { data, refresh } = ge.query({ max }).useCache({ wait: 700 });
-  const { search, filtered } = useFilters(data);
+  const [selectedVolumeFilter, setSelectedVolumeFilter] = useLocalStorage(
+    'volume',
+    'Mid'
+  );
+  const { search, filtered, setFiltered, clear } = useFilters(
+    data,
+    volume_filters[selectedVolumeFilter]
+  );
   return (
     <div className={styles.container}>
       <Head>
@@ -168,6 +199,51 @@ export default function Home() {
           className={styles.search}
           placeholder="Search"
         />
+        <input
+          defaultValue={max}
+          onKeyPress={e => {
+            if (!e.currentTarget.value) return;
+            if (e.code !== 'Enter') return;
+            push(`/?max=${e.currentTarget.value}`);
+          }}
+          className={styles.search}
+          placeholder="Set max buy price"
+        />
+        <button
+          disabled={selectedVolumeFilter === 'All'}
+          onClick={() => {
+            setSelectedVolumeFilter('All');
+            clear();
+          }}
+        >
+          All
+        </button>
+        <button
+          disabled={selectedVolumeFilter === 'Low'}
+          onClick={() => {
+            setSelectedVolumeFilter('Low');
+            setFiltered({
+              volume(v) {
+                return v >= 1;
+              },
+            });
+          }}
+        >
+          Low
+        </button>
+        <button
+          disabled={selectedVolumeFilter === 'Mid'}
+          onClick={() => {
+            setSelectedVolumeFilter('Mid');
+            setFiltered({
+              volume(v) {
+                return v >= 45;
+              },
+            });
+          }}
+        >
+          Mid
+        </button>
         <VTable list={filtered} refresh={refresh} />
       </main>
     </div>
