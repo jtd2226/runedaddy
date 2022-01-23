@@ -9,8 +9,8 @@ const hour = ge.path('1h');
 const item = ge.path('mapping');
 
 const transforms = {
-  m: text => text.substring(0, text.length - 1) * 1000000,
-  k: text => text.substring(0, text.length - 1) * 1000,
+  m: 1000000,
+  k: 1000,
 };
 
 function parse(text) {
