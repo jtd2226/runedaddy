@@ -13,9 +13,9 @@ const ge = Request.path('api/hello');
 
 function VTable({ list, refresh }) {
   const [
-    { sorted = list, sortBy = 'margin', direction = SortDirection.DESC },
+    { sorted = list, sortBy = 'profit', direction = SortDirection.DESC },
     setState,
-  ] = React.useState({});
+  ] = useLocalStorage('sort', {});
 
   const sort = React.useCallback(
     ({ sortBy, sortDirection: direction }) => {
@@ -31,6 +31,10 @@ function VTable({ list, refresh }) {
     },
     [list, refresh]
   );
+
+  React.useEffect(() => {
+    sort({ sortBy, sortDirection: direction });
+  }, [sortBy, direction, sort]);
 
   return (
     <AutoSizer>
@@ -97,6 +101,13 @@ function VTable({ list, refresh }) {
           />
           <Column
             width={150}
+            minWidth={50}
+            label="profit"
+            dataKey="profit"
+            cellDataGetter={({ rowData }) => rowData.profit?.toLocaleString()}
+          />
+          <Column
+            width={150}
             minWidth={90}
             label="margin"
             dataKey="margin"
@@ -143,13 +154,6 @@ function VTable({ list, refresh }) {
             dataKey="limit"
             cellDataGetter={({ rowData }) => rowData.limit?.toLocaleString()}
           />
-          <Column
-            width={150}
-            minWidth={50}
-            label="profit"
-            dataKey="profit"
-            cellDataGetter={({ rowData }) => rowData.profit?.toLocaleString()}
-          />
           <Column width={150} label="↺" dataKey="refresh" />
         </Table>
       )}
@@ -179,7 +183,7 @@ export default function Home() {
   const { data, refresh } = ge.query({ max }).useCache({ wait: 700 });
   const [selectedVolumeFilter, setSelectedVolumeFilter] = useLocalStorage(
     'volume',
-    'Mid'
+    'Low'
   );
   const { search, filtered, setFiltered, clear } = useFilters(
     data,
