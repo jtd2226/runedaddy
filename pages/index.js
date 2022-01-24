@@ -12,17 +12,12 @@ import useSort from 'hooks/useSort';
 
 const ge = Request.path('api/hello');
 
-function VTable({ list, refresh, sort, sortOptions }) {
+function VTable({ list, sort, sortOptions }) {
   const tableSort = React.useCallback(
     ({ sortBy: name, sortDirection: order }) => {
-      if (name === 'refresh') {
-        refresh();
-        return;
-      }
-
       sort({ name, order });
     },
-    [sort, refresh]
+    [sort]
   );
 
   const direction =
@@ -146,7 +141,6 @@ function VTable({ list, refresh, sort, sortOptions }) {
             dataKey="limit"
             cellDataGetter={({ rowData }) => rowData.limit?.toLocaleString()}
           />
-          <Column width={150} label="↺" dataKey="refresh" />
         </Table>
       )}
     </AutoSizer>
@@ -249,12 +243,12 @@ export default function Home() {
         {loading ? (
           'loading...'
         ) : (
-          <VTable
-            list={sorted}
-            sort={sort}
-            refresh={refresh}
-            sortOptions={options}
-          />
+          <>
+            <button onClick={refresh} style={{ opacity: 1 }}>
+              ↺
+            </button>
+            <VTable list={sorted} sort={sort} sortOptions={options} />
+          </>
         )}
       </main>
     </div>
