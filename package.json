@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "serve": "next build && next start --port 5000"
   },
   "dependencies": {
     "dayjs": "^1.10.7",
