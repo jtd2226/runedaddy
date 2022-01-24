@@ -46,16 +46,21 @@ export default async function handler(req, res) {
         lowPriceVolume = 0,
         highPriceVolume = 0,
       } = item;
-      const margin = Math.abs(high - low);
-      const profit =
-        Math.min(item.limit ?? Infinity, Math.floor(max / low)) * margin;
+      const hi = Math.max(high, low);
+      const lo = Math.min(high, low);
+      const margin = Math.floor(hi * 0.99 - lo);
+      const low_volume = Math.min(lowPriceVolume, highPriceVolume);
+      const profit = margin * low_volume;
       const volume = lowPriceVolume + highPriceVolume;
       item.margin = margin;
       item.profit = profit;
       item.volume = volume;
+      item.low_volume = low_volume;
       item.prices = {
         high,
         low,
+        hi,
+        lo,
         margin,
         profit,
         highTime: highTime * 1000,
@@ -63,7 +68,7 @@ export default async function handler(req, res) {
       };
       return item;
     })
-    .filter(({ prices }) => prices.low < max)
+    .filter(({ prices }) => prices.lo < max)
     .sort((a, b) => b.prices.margin - a.prices.margin);
   return res.status(200).json(data);
 }
