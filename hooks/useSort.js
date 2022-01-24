@@ -84,7 +84,7 @@ export default function useSort({
 
   const [[name, type, order], setState] = useLocalStorage(storage_key, [
     defaultName,
-    defaultType ?? null,
+    defaultType,
     Order[defaultOrder] ?? Order.DESC,
   ]);
 
