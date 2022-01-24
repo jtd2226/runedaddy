@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { isEqual, isFunction } from 'lodash';
+import useLocalStorage from 'hooks/useLocalStorage';
 
 const sorts = {};
 sorts.default = (a, b) => {
@@ -67,8 +68,8 @@ SortBy.Datetime = function (values, name, order) {
 };
 
 const Order = {
-  descending: -1,
-  ascending: 1,
+  DESC: -1,
+  ASC: 1,
 };
 
 export default function useSort({
@@ -76,13 +77,15 @@ export default function useSort({
   value,
   type: defaultType,
   order: defaultOrder,
+  storage_key,
 }) {
   const original = useRef();
   const [values, setValues] = useState([]);
-  const [[name, type, order], setState] = useState([
+
+  const [[name, type, order], setState] = useLocalStorage(storage_key, [
     defaultName,
     defaultType,
-    Order[defaultOrder] ?? Order.descending,
+    Order[defaultOrder] ?? Order.DESC,
   ]);
 
   useEffect(() => {
@@ -100,11 +103,7 @@ export default function useSort({
   const toggle = useCallback(
     ({ name, type } = {}) =>
       setState(([oldname, oldtype, oldorder]) => {
-        return [
-          name,
-          type,
-          oldorder === Order.descending ? Order.ascending : Order.descending,
-        ];
+        return [name, type, oldorder === Order.DESC ? Order.ASC : Order.DESC];
       }),
     []
   );
@@ -115,6 +114,7 @@ export default function useSort({
   );
 
   return {
+    options: { name, type, order },
     sorted,
     sort,
     toggle,

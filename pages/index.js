@@ -8,33 +8,25 @@ import 'react-virtualized/styles.css';
 import useFilters from 'hooks/useFiltered';
 import { useRouter } from 'next/router';
 import useLocalStorage from 'hooks/useLocalStorage';
+import useSort from 'hooks/useSort';
 
 const ge = Request.path('api/hello');
 
-function VTable({ list, refresh }) {
-  const [
-    { sorted = list, sortBy = 'profit', direction = SortDirection.DESC },
-    setState,
-  ] = useLocalStorage('sort', {});
-
-  const sort = React.useCallback(
-    ({ sortBy, sortDirection: direction }) => {
-      if (sortBy === 'refresh') {
+function VTable({ list, refresh, sort, sortOptions }) {
+  const tableSort = React.useCallback(
+    ({ sortBy: name, sortDirection: order }) => {
+      if (name === 'refresh') {
         refresh();
         return;
       }
-      const sorted = _.sortBy(list, [sortBy]);
-      if (direction === SortDirection.DESC) {
-        sorted.reverse();
-      }
-      setState({ sorted, sortBy, direction });
+
+      sort({ name, order });
     },
-    [list, refresh]
+    [sort, refresh]
   );
 
-  React.useEffect(() => {
-    sort({ sortBy, sortDirection: direction });
-  }, [sortBy, direction, sort]);
+  const direction =
+    sortOptions.order === -1 ? SortDirection.DESC : SortDirection.ASC;
 
   return (
     <AutoSizer>
@@ -45,11 +37,11 @@ function VTable({ list, refresh }) {
           className="table"
           headerHeight={20}
           rowHeight={50}
-          rowCount={sorted.length}
-          sort={sort}
-          sortBy={sortBy}
+          rowCount={list.length}
+          sort={tableSort}
+          sortBy={sortOptions.name}
           sortDirection={direction}
-          rowGetter={({ index }) => sorted[index]}
+          rowGetter={({ index }) => list[index]}
         >
           <Column
             label="Name"
@@ -180,7 +172,7 @@ export default function Home() {
     query: { max = '4m' },
     push,
   } = useRouter();
-  const { data, refresh } = ge.query({ max }).useCache({ wait: 700 });
+  const { data, loading, refresh } = ge.query({ max }).useCache({ wait: 700 });
   const [selectedVolumeFilter, setSelectedVolumeFilter] = useLocalStorage(
     'volume',
     'Low'
@@ -189,6 +181,12 @@ export default function Home() {
     data,
     volume_filters[selectedVolumeFilter]
   );
+  const { sorted, sort, options } = useSort({
+    name: 'margin',
+    value: filtered,
+    order: SortDirection.DESC,
+    storage_key: 'sort',
+  });
   return (
     <div className={styles.container}>
       <Head>
@@ -248,7 +246,16 @@ export default function Home() {
         >
           Mid
         </button>
-        <VTable list={filtered} refresh={refresh} />
+        {loading ? (
+          'loading...'
+        ) : (
+          <VTable
+            list={sorted}
+            sort={sort}
+            refresh={refresh}
+            sortOptions={options}
+          />
+        )}
       </main>
     </div>
   );

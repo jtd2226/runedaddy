@@ -69,6 +69,6 @@ export default async function handler(req, res) {
       return item;
     })
     .filter(({ prices }) => prices.lo < max)
-    .sort((a, b) => b.prices.profit - a.prices.profit);
+    .sort((a, b) => b.margin - a.margin);
   return res.status(200).json(data);
 }
