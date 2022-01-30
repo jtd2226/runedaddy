@@ -191,17 +191,20 @@ export default function Home() {
 
       <main className={styles.main}>
         <input
+          onClick={e => e?.currentTarget?.select?.()}
           onChange={e => search('name', e.currentTarget.value)}
           className={styles.search}
           placeholder="Search"
         />
         <input
           defaultValue={max}
+          onClick={e => e?.currentTarget?.select?.()}
           onKeyPress={e => {
             if (!e.currentTarget.value) return;
             if (e.code !== 'Enter') return;
             push(`/?max=${e.currentTarget.value}`);
           }}
+          onBlur={e => push(`/?max=${e.currentTarget.value}`)}
           className={styles.search}
           placeholder="Set max buy price"
         />
